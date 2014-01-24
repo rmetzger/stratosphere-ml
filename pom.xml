@@ -1,200 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>de.tuberlin.dima</groupId>
-		<artifactId>ml</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
+	<groupId>de.tuberlin.dima</groupId>
+	<artifactId>ml</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Machine Learning for Hadoop</name>
 
-	<artifactId>logreg-pact</artifactId>
-	<name>Logistic Regression Implementations for Stratosphere Ozone</name>
+	<packaging>pom</packaging>
 
-	<packaging>jar</packaging>
+	<modules>
+		<module>logreg-common</module>
+		<module>logreg-pact</module>
+	</modules>
+
+  <properties>
+    <!-- <mahout.version>0.8-hdp1.2.1</mahout.version> -->
+    <!-- <mahout.version>0.8-yarn</mahout.version> -->
+    <mahout.version>0.8</mahout.version>
+    <!-- <hadoop.version>1.2.1</hadoop.version> -->
+    <hadoop.version>2.1.0-beta</hadoop.version>
+  </properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>MavenCentral</id>
+			<url>http://repo1.maven.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<!-- Snapshots were needed only for snapshot versions of mahout -->
+		<!-- 
+		<repository>
+			<id>apache-snapshots</id>
+			<url>http://repository.apache.org/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		-->
+	</repositories>
+
+
+	<profiles>
+    <profile>
+      <id>hadoop_yarn</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <!-- YARN -->
+          <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>2.2.0</version>
+          </dependency>
+          <!-- 
+          <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop.version}</version>
+          </dependency>
+          -->
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+    <profile>
+      <id>hadoop_v1</id>
+		  <dependencyManagement>
+	      <dependencies>
+	        <!-- "Old" Hadoop = MapReduce v1 -->
+	        <dependency>
+	          <groupId>org.apache.hadoop</groupId>
+	          <artifactId>hadoop-core</artifactId>
+	      		<version>1.2.1</version>
+	        </dependency>
+	      </dependencies>
+		  </dependencyManagement>
+    </profile>
+  </profiles>
+
+
+
+
+
+  <dependencyManagement>
+	<!-- this section defines the module VERSIONS that are used for submodules 
+		if nothing else is specified. The dependencies are NOT automatically included 
+		in submodules. -->
+    <dependencies>
+      <dependency>
+				<groupId>org.apache.mahout</groupId>
+				<artifactId>mahout-core</artifactId>
+				<version>${mahout.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.mahout</groupId>
+				<artifactId>mahout-math</artifactId>
+				<version>${mahout.version}</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 
 		<dependency>
-			<groupId>de.tuberlin.dima</groupId>
-			<artifactId>logreg-common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
 		</dependency>
+    
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>1.5.1</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito</artifactId>
+      <version>1.5.1</version>
+      <scope>test</scope>
+    </dependency>
 
 		<dependency>
-			<groupId>eu.stratosphere</groupId>
-			<artifactId>stratosphere-core</artifactId>
-			<version>0.5-SNAPSHOT</version>
-			<scope>compile</scope>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version> <!-- Hadoop 1.0.4 has 1.2.15 included, latest version is 1.2.17 -->
 		</dependency>
-		<dependency>
-			<groupId>eu.stratosphere</groupId>
-			<artifactId>stratosphere-clients</artifactId>
-			<version>0.5-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-    <dependency>
-      <groupId>eu.stratosphere</groupId>
-      <artifactId>stratosphere-java-example</artifactId>
-      <version>0.5-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <!-- for FileSystem access -->
-    
-    <dependency>
-      <groupId>org.apache.mahout</groupId>
-      <artifactId>mahout-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.mahout</groupId>
-      <artifactId>mahout-math</artifactId>
-    </dependency>
-    
-    <!--  -->
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.4</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    
-
-    <dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
-			<scope>test</scope>
-    </dependency>
-	</dependencies>
-
-	<!-- Required for Stratosphere job -->
-	<!-- We will use the maven-assembly plugin instead, is designed to include dependencies in jar -->
-	<build>
-		<plugins>
-
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-
-					<!-- Ensemble Training -->
-					<execution>
-						<id>EnsembleJob</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<classifier>EnsembleJob</classifier>
-							<archive>
-								<manifestEntries>
-									<Pact-Assembler-Class>de.tuberlin.dima.ml.pact.logreg.ensemble.EnsembleJob</Pact-Assembler-Class>
-								</manifestEntries>
-							</archive>
-							<includes>
-								<include>**/*.class</include>
-							</includes>
-						</configuration>
-					</execution>
-					
-					<!-- BatchGD -->
-          <execution>
-            <id>BatchGD</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>BatchGD</classifier>
-              <archive>
-                <manifestEntries>
-                  <Pact-Assembler-Class>de.tuberlin.dima.ml.pact.logreg.batchgd.BatchGDPlanAssembler</Pact-Assembler-Class>
-                </manifestEntries>
-              </archive>
-              <includes>
-                <include>**/*.class</include>
-              </includes>
-            </configuration>
-          </execution>
-
-          <!-- SFO -->
-          <!-- 
-          <execution>
-            <id>SFO</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>SFO</classifier>
-              <archive>
-                <manifestEntries>
-                  <Pact-Assembler-Class>de.tuberlin.dima.ml.pact.logreg.sfo.SFOPlanAssembler</Pact-Assembler-Class>
-                </manifestEntries>
-              </archive>
-              <includes>
-                <include>**/*.class</include>
-              </includes>
-            </configuration>
-          </execution>
-          -->
-        </executions>
-      </plugin>
 		
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>job</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/job.xml</descriptor>
-              </descriptors>
-			         <archive>
-			           <manifestEntries>
-			             <Pact-Assembler-Class>de.tuberlin.dima.ml.pact.logreg.sfo.SFOPlanAssembler</Pact-Assembler-Class>
-			           </manifestEntries>
-			         </archive>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<id>EnsembleJob</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<classifier>EnsembleJob</classifier>
-							<archive>
-								<manifestEntries>
-									<Pact-Assembler-Class>de.tuberlin.dima.ml.pact.logreg.ensemble.EnsembleJob</Pact-Assembler-Class>
-								</manifestEntries>
-							</archive>
-							<includes>
-                <include>**/*.class</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			 -->
-		</plugins>
-	</build>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>14.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.1</version>
+		</dependency>
+	</dependencies>
 
 </project>

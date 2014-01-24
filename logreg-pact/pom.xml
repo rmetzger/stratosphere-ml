@@ -1,0 +1,223 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>de.tuberlin.dima</groupId>
+		<artifactId>ml</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>logreg-pact</artifactId>
+	<name>Logistic Regression Implementations for Stratosphere Ozone</name>
+
+	<packaging>jar</packaging>
+    <repositories>
+        <repository>
+            <id>snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+    </repositories>
+	<dependencies>
+
+		<dependency>
+			<groupId>de.tuberlin.dima</groupId>
+			<artifactId>logreg-common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.stratosphere</groupId>
+			<artifactId>stratosphere-core</artifactId>
+			<version>0.5-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>eu.stratosphere</groupId>
+			<artifactId>stratosphere-clients</artifactId>
+			<version>0.5-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+    <dependency>
+      <groupId>eu.stratosphere</groupId>
+      <artifactId>stratosphere-java-examples</artifactId>
+      <version>0.5-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- for FileSystem access -->
+
+    
+    <dependency>
+      <groupId>org.apache.mahout</groupId>
+      <artifactId>mahout-core</artifactId>
+      <version>0.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.mahout</groupId>
+      <artifactId>mahout-math</artifactId>
+      <version>0.8</version>
+    </dependency>
+    
+    <!--  -->
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.4</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    
+
+    <dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+    </dependency>
+	</dependencies>
+
+	<!-- Required for Stratosphere job -->
+	<!-- We will use the maven-assembly plugin instead, is designed to include dependencies in jar -->
+	<build>
+		<plugins>
+            
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <!-- <archive>
+                        <manifest>
+                            <program-class>de.tuberlin.dima.ml.pact.logreg.ensemble.EnsembleJob</program-class>
+                        </manifest>
+                    </archive> -->
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+
+					<!-- Ensemble Training -->
+					<execution>
+						<id>EnsembleJob</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>EnsembleJob</classifier>
+							<archive>
+								<manifestEntries>
+									<program-class>de.tuberlin.dima.ml.pact.logreg.ensemble.EnsembleJob</program-class>
+								</manifestEntries>
+							</archive>
+							<includes>
+								<include>**/*.class</include>
+							</includes>
+						</configuration>
+					</execution>
+					
+					<!-- BatchGD -->
+          <execution>
+            <id>BatchGD</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>BatchGD</classifier>
+              <archive>
+                <manifestEntries>
+                  <program-class>de.tuberlin.dima.ml.pact.logreg.batchgd.BatchGDPlanAssembler</program-class>
+                </manifestEntries>
+              </archive>
+              <includes>
+                <include>**/*.class</include>
+              </includes>
+            </configuration>
+          </execution>
+
+          <!-- SFO -->
+          <!-- 
+          <execution>
+            <id>SFO</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>SFO</classifier>
+              <archive>
+                <manifestEntries>
+                  <program-class>de.tuberlin.dima.ml.pact.logreg.sfo.SFOPlanAssembler</program-class>
+                </manifestEntries>
+              </archive>
+              <includes>
+                <include>**/*.class</include>
+              </includes>
+            </configuration>
+          </execution>
+          -->
+        </executions>
+      </plugin>
+		
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>job</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/job.xml</descriptor>
+              </descriptors>
+			         <archive>
+			           <manifestEntries>
+			             <program-class>de.tuberlin.dima.ml.pact.logreg.sfo.SFOPlanAssembler</program-class>
+			           </manifestEntries>
+			         </archive>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>EnsembleJob</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>EnsembleJob</classifier>
+							<archive>
+								<manifestEntries>
+									<program-class>de.tuberlin.dima.ml.pact.logreg.ensemble.EnsembleJob</program-class>
+								</manifestEntries>
+							</archive>
+							<includes>
+                <include>**/*.class</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			 -->
+		</plugins>
+	</build>
+
+</project>
