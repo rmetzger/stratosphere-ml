@@ -1,5 +1,12 @@
-logreg for stratosphere
+A collection of code for a Stratosphere Machine Learning Library
 ======
+
+This repository contains a collection of code to create a machine learning library.
+Please note that the code here is copied together from multiple sources. 
+
+It is work in progress and does not represent an official implementation of the Stratosphere team.
+
+## Logistic Regression
 
 Parallel implementations of Logistic Regression.
 
