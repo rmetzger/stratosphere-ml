@@ -6,6 +6,19 @@ Please note that the code here is copied together from multiple sources.
 
 It is work in progress and does not represent an official implementation of the Stratosphere team.
 
+## Algorithms
+
+| Algorithm     | Status        | Author(s)  |
+| ------------- |---------------| --------|
+| Streaming K-Means | untested code | @jllopezpino and others |
+| K-Means | in examples of Stratosphere | Stratosphere Developers |
+| Logistic regression with SGD | untested code | Andre Hacker (@ahacker), Mingliang Qi (@qmlmoon) |
+| Logistic regression (new Java API) | not finished | @zentol, see mailing list |
+| Item similarity for recommendations  | untested code | Janani Chakkaradhari (@JananiC), Silvia Julinda (@sjulinda), Suryamita Harindrari (@sharindrari) |
+| Random forests | untested code | - |
+| Matrix factorization | untested code available but not committed | - |
+
+
 ## Logistic Regression
 
 Parallel implementations of Logistic Regression.
